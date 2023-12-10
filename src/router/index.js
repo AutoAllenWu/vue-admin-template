@@ -42,18 +42,49 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   },
-
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/smart-diff/index',
+  //   children: [
+  //     {
+  //       path: 'smart-diff',
+  //       component: () => import('@/views/smart-diff/index'),
+  //       name: 'smart-diff',
+  //       meta: { title: 'smart-diff', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
-  },
+    redirect: '/some',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/smart-diff/index'),
+        name: 'Smart-Diff-1',
+        meta: { title: 'Smart-Diff', icon: 'el-icon-s-platform', affix: true }
+      },
+      {
+        path: 'some',
+        component: () => import('@/views/smart-diff/index'),
+        name: 'Smart-Diff-2',
+        meta: { title: 'Smart-Diff', icon: 'el-icon-s-platform', affix: true }
+      }
+    ] },
+
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/smart-diff/index',
+  //   children: [{
+  //     path: 'dashboard',
+  //     name: 'Dashboard',
+  //     component: () => import('@/views/dashboard/index'),
+  //     meta: { title: 'Dashboard', icon: 'dashboard' }
+  //   }]
+  // },
 
   {
     path: '/example',
