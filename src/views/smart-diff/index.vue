@@ -25,8 +25,6 @@
       highlight-current-row
       style="width: 100%;"
     >
-<!--           -->
-
       <el-table-column label="任务ID" prop="id" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -81,7 +79,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="row && row.status >2" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-if="row && row.status >2" type="primary" size="mini" @click="handleUpdate(row.id)">
             查看详情
           </el-button>
           <el-button type="warning" size="mini" @click="handleUpdate(row)">
@@ -97,39 +95,45 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
-        </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Imp">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
-        </el-form-item>
-        <el-form-item label="Remark">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          Cancel
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
-        </el-button>
-      </div>
+      <CodeDiff
+        :old-string="oldContent"
+        :new-string="newContent"
+        :file-name="fileName"
+        output-format="side-by-side"/>
+
     </el-dialog>
+    <!--      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">-->
+    <!--        <el-form-item label="Type" prop="type">-->
+    <!--          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">-->
+    <!--            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />-->
+    <!--          </el-select>-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="Date" prop="timestamp">-->
+    <!--          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="Title" prop="title">-->
+    <!--          <el-input v-model="temp.title" />-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="Status">-->
+    <!--          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">-->
+    <!--            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />-->
+    <!--          </el-select>-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="Imp">-->
+    <!--          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="Remark">-->
+    <!--          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />-->
+    <!--        </el-form-item>-->
+    <!--      </el-form>-->
+    <!--      <div slot="footer" class="dialog-footer">-->
+    <!--        <el-button @click="dialogFormVisible = false">-->
+    <!--          Cancel-->
+    <!--        </el-button>-->
+    <!--        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">-->
+    <!--          Confirm-->
+    <!--        </el-button>-->
+    <!--      </div>-->
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
@@ -148,6 +152,7 @@ import { getAllTasks } from '@/api/smart-diff'
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import '@/assets/custom-theme/index.css'
+import CodeDiff from 'vue-code-diff'
 
 const calendarTypeOptions = [
   { key: '1', display_name: '初始化' },
@@ -167,8 +172,8 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 }, {})
 
 export default {
-  name: 'ComplexTable',
-  components: { Pagination },
+  name: 'SmartDiff',
+  components: { CodeDiff, Pagination },
   // directives: { waves },
   filters: {
     statusFilter(status) {
@@ -189,6 +194,9 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
+      oldContent: '1234', // 原始内容
+      newContent: '123', // 修改后的内容
+      fileName: 'a/b/c/d/e.java',
       listQuery: {
         page_num: 1,
         page_size: 20,
@@ -233,6 +241,13 @@ export default {
     this.getTaskList()
   },
   methods: {
+    openNewGptWindow(taskId) {
+      // 获取目标路由的完整 URL
+      const { href } = this.$router.resolve({ name: 'smartDiffTaskDetail', params: {id: taskId}})
+
+      // 打开新窗口并跳转到目标路由
+      window.open(href, '_blank')
+    },
     getStatusText(status) {
       switch (status) {
         case 1:
@@ -242,8 +257,9 @@ export default {
         case 3:
           return 'Diff分支成功'
         case 4 :
-        case 99:
           return 'GPT处理成功'
+        case 99:
+          return '任务完成'
         case -2:
           return '获取分支失败'
         case -3:
@@ -319,9 +335,9 @@ export default {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -341,14 +357,15 @@ export default {
         }
       })
     },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+    handleUpdate(taskId) {
+      // this.temp = Object.assign({}, row) // copy obj
+      // this.temp.timestamp = new Date(this.temp.timestamp)
+      // this.dialogStatus = 'update'
+      this.openNewGptWindow(taskId)
+      // this.dialogFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {

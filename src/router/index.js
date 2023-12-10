@@ -42,38 +42,65 @@ export const constantRoutes = [
     component: () => import('@/views/404'),
     hidden: true
   },
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   redirect: '/smart-diff/index',
-  //   children: [
-  //     {
-  //       path: 'smart-diff',
-  //       component: () => import('@/views/smart-diff/index'),
-  //       name: 'smart-diff',
-  //       meta: { title: 'smart-diff', icon: 'dashboard', affix: true }
-  //     }
-  //   ]
-  // },
   {
     path: '/',
     component: Layout,
-    redirect: '/some',
+    redirect: '/smartDiff',
+    meta: { title: '智能工具平台' }
+    // children: [
+    //   {
+    //     path: 'index',
+    //     component: () => import('@/views/smart-diff/index'),
+    //     name: 'SmartDiff',
+    //     meta: { title: 'smartDiffTask', icon: 'dashboard', affix: true }
+    //   }
+    // ]
+  },
+  {
+    path: '/smartDiff',
+    component: Layout,
+    //redirect: '/some',
+    meta: { title: 'Diff看板' },
+    children: [
+      {
+        path: 'tasks',
+        component: () => import('@/views/smart-diff/index'),
+        name: 'smartDiffTasks',
+        meta: { title: '任务列表', icon: 'el-icon-s-platform', affix: true }
+      },
+      {
+        path: 'project',
+        component: () => import('@/views/smart-diff/index'),
+        name: 'smartDiffProject',
+        meta: { title: '项目管理', icon: 'el-icon-s-platform', affix: true }
+      },
+      {
+        path: 'promt',
+        component: () => import('@/views/smart-diff/index'),
+        name: 'smartDiffPromt',
+        meta: { title: 'Promt管理', icon: 'el-icon-s-platform', affix: true }
+      },
+      {
+        path: 'taskDetail/:id',
+        name: 'smartDiffTaskDetail',
+        hidden: true,
+        component: () => import('@/views/task-detail/index'),
+        meta: { title: '任务diff详情', icon: 'form', hidden:true}
+      }
+    ] },
+  {
+    path: '/some/taskDetail',
+    component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
-        component: () => import('@/views/smart-diff/index'),
-        name: 'Smart-Diff-1',
-        meta: { title: 'Smart-Diff', icon: 'el-icon-s-platform', affix: true }
-      },
-      {
-        path: 'some',
-        component: () => import('@/views/smart-diff/index'),
-        name: 'Smart-Diff-2',
-        meta: { title: 'Smart-Diff', icon: 'el-icon-s-platform', affix: true }
+        name: 'diffTaskDetail',
+        component: () => import('@/views/task-detail/index'),
+        meta: { title: 'Detail', icon: 'form', hidden:true}
       }
-    ] },
-
+    ]
+  },
   // {
   //   path: '/',
   //   component: Layout,
