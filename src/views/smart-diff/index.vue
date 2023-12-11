@@ -26,46 +26,55 @@
       style="width: 100%;"
     >
       <el-table-column label="任务ID" prop="id" align="center" width="80">
+<!--      <el-table-column label="任务ID" prop="id" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目描述" width="200" align="center">
+<!--      <el-table-column label="项目描述" width="200" align="center">-->
+      <el-table-column label="项目描述" align="center">
         <template slot-scope="{row}">
           <span>{{ row.git_description }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="GIT_SSH" width="450" align="center">
+      <el-table-column label="GIT_SSH" align="center">
+<!--      <el-table-column label="GIT_SSH" width="450" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.ssh_url }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="基准分支" width="100" align="center">
+      <el-table-column label="基准分支" align="center">
+<!--      <el-table-column label="基准分支" width="100" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.base_branch }}</span>
         </template></el-table-column>
-      <el-table-column label="基准CommitID" width="120" align="center">
+      <el-table-column label="CommitID" align="center">
+<!--      <el-table-column label="基准CommitID" width="120" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.base_commit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="对比分支" width="240" align="center">
+      <el-table-column label="对比分支" align="center" style="white-space: nowrap;">
+<!--      <el-table-column label="对比分支" width="240" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.beta_branch }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="对比CommitID" width="120" align="center">
+      <el-table-column label="CommitID"  align="center">
+<!--      <el-table-column label="对比CommitID" width="120" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.beta_commit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="任务状态" width="150" align="center">
+      <el-table-column label="任务状态" align="center">
+<!--      <el-table-column label="任务状态" width="150" align="center">-->
         <template slot-scope="{row}" type="success">
           <!--          <span><el-tag class="tag-item" @type="getTagType(row.status)" > {{ getStatusText(row.status) }}</el-tag></span>-->
-          <span><el-tag class="tag-item" :type="row.status ===4 || row.status ===99 ? 'success' : 'info'"> {{ getStatusText(row.status) }}</el-tag></span>
+          <span><el-tag class="tag-item" :type="getTagType(row.status)"> {{ getStatusText(row.status) }}</el-tag></span>
         </template>
       </el-table-column>
-      <el-table-column label="发起人" width="150" align="center">
+      <el-table-column label="发起人"  align="center">
+<!--      <el-table-column label="发起人" width="150" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.creator }}</span>
         </template>

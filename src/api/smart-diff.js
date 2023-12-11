@@ -14,3 +14,18 @@ export function getTaskDetail(query) {
     params: query
   })
 }
+
+export function rejectGptAdvice(data) {
+  return request({
+    url: '/api/gpt/reject',
+    method: 'post',
+    data
+  })
+}
+export function resetGptAdvice(data) {
+  return request({
+    url: '/api/gpt/reset',
+    method: 'post',
+    data
+  })
+}

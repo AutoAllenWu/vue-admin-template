@@ -27,15 +27,17 @@
       <el-table-column label="GPT建议" width="600" align="left" header-align="center">
         <template slot-scope="{row, $index}">
           <el-card v-show="! row.showGpt">
-            <p><strong><b>业务推测： </b></strong></p>
-            <p>{{ row.gpt_result.business[0] }}</p>
+            <p><strong><b>测试用例建议： </b></strong></p>
+            <div v-for="(v,k) in row.gpt_result.checklist" :key="k" class="text item">
+              <li> {{ v }} </li>
+            </div>
             <el-button style="float: right; padding: 3px 0" type="text" @click="toggleGpt($index)">查看详情</el-button>
           </el-card>
           <el-card class="box-card" v-show="row.showGpt">
 <!--            <div v-for="(v,k) in row.gpt_result" :key="o" class="text item">-->
 <!--              <li> {{'列表内容 ' + o }} </li>-->
 <!--            </div>-->
-            <p><strong><b>业务推测： </b></strong></p>
+            <p><strong><b>业务解释： </b></strong></p>
             <p>{{ row.gpt_result.business[0] }}</p>
             <p><strong><b>改动影响： </b></strong></p>
             <p>{{ row.gpt_result.effect[0] }}</p>
@@ -44,7 +46,6 @@
             <p><strong><b>测试用例建议： </b></strong></p>
             <div v-for="(v,k) in row.gpt_result.checklist" :key="o" class="text item">
               <li> {{ v }} </li>
-
             </div>
             <el-button style="float: right; padding: 3px 0" type="text" @click="toggleGpt($index)">收起</el-button>
           </el-card>
@@ -52,14 +53,30 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="row && row.status >2" type="primary" size="mini" @click="handleModifyStatus(row.id)">
-            查看详情
+          <el-tag class="el-tag--success" v-if="row && row.is_cased == 1">
+            已接受
+          </el-tag>
+          <el-tag class="el-tag--danger" v-if="row && row.is_cased == 2">
+            已拒绝
+          </el-tag>
+          <el-button v-if="row && row.is_cased == 0" type="primary" size="mini" @click="handleAccept(row)" style="margin-left: 20px; margin-right: 20px">
+            接受
           </el-button>
-          <el-button type="warning" size="mini" @click="handleModifyStatus(row)">
-            更新任务
+          <el-popconfirm
+            ref="acceptPopConfirm"
+            title="接受建议并新建case，确定么？"
+            confirmButtonText="确定"
+            cancelButtonText="取消"
+            @confirm="acceptConfirmHandler"
+          >
+          </el-popconfirm>
+          <el-button v-if ="row.is_cased == 2"  type="warning" size="mini" @click="handleReset(row,$index)" style="float: right;margin-left: 20px; margin-right: 20px">
+            重置
           </el-button>
-          <el-button v-if="row && (row.status == 4 || row.status == 99)" size="mini" type="danger" @click="handleModifyStatus(row,$index)">
-            删除
+          <el-popconfirm ref="acceptPopConfirm">
+          </el-popconfirm>
+          <el-button v-if="row && (row.is_cased == 0)" size="mini" type="danger" @click="handleReject(row,$index)" style="margin-left: 20px; margin-right: 20px">
+            拒绝
           </el-button>
         </template>
         </el-table-column>
@@ -71,7 +88,7 @@
 </template>
 
 <script>
-import { getTaskDetail } from '@/api/smart-diff'
+import { getTaskDetail, rejectGptAdvice, resetGptAdvice } from '@/api/smart-diff'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import '@/assets/custom-theme/index.css'
 import CodeDiff from 'vue-code-diff'
@@ -97,7 +114,10 @@ export default {
         page_num: 1,
         page_size: 20,
         task_id: this.paramId
-      }
+      },
+      currentRow:null,
+      rejectData: {"gpt_result_id": null},
+      resetData: {"gpt_result_id": null}
     }
   },
   created() {
@@ -106,6 +126,46 @@ export default {
 
   },
   methods: {
+    acceptConfirmHandler(){
+
+    },
+    handleReject(row,index){
+      this.rejectData.gpt_result_id = row.gpt_result_id;
+      rejectGptAdvice(this.rejectData).then(
+        response => {
+          if (response.code == 200){
+            this.diffList[index].is_cased=2
+            this.$notify({
+              title: 'Success',
+              message: '操作成功',
+              type: 'success',
+              duration: 2000
+            })
+          }
+        }
+      );
+
+    },
+    handleAccept(row){
+      this.currentRow = row;
+      this.$refs.acceptPopConfirm.showPopper = true;
+    },
+    handleReset(row,index){
+      this.resetData.gpt_result_id = row.gpt_result_id;
+      resetGptAdvice(this.resetData).then(
+        response => {
+          if (response.code == 200){
+            this.diffList[index].is_cased=0
+            this.$notify({
+              title: 'Success',
+              message: '操作成功',
+              type: 'success',
+              duration: 2000
+            })
+          }
+        }
+      );
+    },
     toggleDetail(index) {
       console.log("进入 toggle")
       console.log(index)
