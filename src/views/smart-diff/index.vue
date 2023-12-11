@@ -30,6 +30,11 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="项目描述" width="200" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.git_description }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="GIT_SSH" width="450" align="center">
         <template slot-scope="{row}">
           <span>{{ row.ssh_url }}</span>

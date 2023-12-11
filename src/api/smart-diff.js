@@ -7,3 +7,10 @@ export function getAllTasks(query) {
     params: query
   })
 }
+export function getTaskDetail(query) {
+  return request({
+    url: '/api/task/get_task_detail',
+    method: 'get',
+    params: query
+  })
+}
