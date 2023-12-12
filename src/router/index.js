@@ -59,7 +59,7 @@ export const constantRoutes = [
   {
     path: '/smartDiff',
     component: Layout,
-    //redirect: '/some',
+    redirect: '/smartDiff/tasks',
     meta: { title: 'Diff看板' },
     children: [
       {
@@ -70,7 +70,7 @@ export const constantRoutes = [
       },
       {
         path: 'project',
-        component: () => import('@/views/smart-diff/index'),
+        component: () => import('@/views/project/index'),
         name: 'smartDiffProject',
         meta: { title: '项目管理', icon: 'el-icon-s-platform', affix: true }
       },

@@ -10,8 +10,8 @@
       <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter" style=" margin-left: 20px; margin-bottom: 20px">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 400px; margin-bottom: 20px" type="warning" icon="el-icon-edit" @click="handleCreate">
-        手动新建任务
+      <el-button class="filter-item"  style="margin-left: 400px; margin-bottom: 20px; float: right" type="info" icon="el-icon-edit" @click="handleCreate">
+        创建任务
       </el-button>
 
     </div>
@@ -96,7 +96,7 @@
           <el-button v-if="row && row.status >2" type="primary" size="mini" @click="handleUpdate(row.id)">
             查看详情
           </el-button>
-          <el-button type="warning" size="mini" @click="handleUpdate(row)">
+          <el-button style="background-color: rgb(252, 190, 60); color: white" size="mini" @click="handleUpdate(row)">
             更新任务
           </el-button>
           <el-button v-if="row && (row.status == 4 || row.status == 99)" size="mini" type="danger" @click="handleDelete(row,$index)">
@@ -108,46 +108,40 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <CodeDiff
-        :old-string="oldContent"
-        :new-string="newContent"
-        :file-name="fileName"
-        output-format="side-by-side"/>
+    <el-dialog title="手动创建任务" :visible.sync="taskVisible" center>
+      <el-form label-width="200px" style="border:1px solid #C4E1C5 ; padding: 20px" oncancel="resetForm">
+        <el-row>
+          <el-col>
+            <el-form-item  label="Git地址(ssh地址)：">
+              <el-input v-model="createTaskFormData.git_uri"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col >
+            <el-form-item label="待对比分支：">
+              <el-input v-model="createTaskFormData.betaBranch"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col >
+            <el-form-item label="基准分支(默认master)：">
+              <el-input v-model="createTaskFormData.baseBranch"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col >
+            <el-form-item label="CheckList ID">
+              <el-input v-model="createTaskFormData.checkListId"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div style="text-align: right"> <el-button type="primary" @click="createTask(createTaskFormData)">提交</el-button></div>
 
+      </el-form>
     </el-dialog>
-    <!--      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">-->
-    <!--        <el-form-item label="Type" prop="type">-->
-    <!--          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">-->
-    <!--            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />-->
-    <!--          </el-select>-->
-    <!--        </el-form-item>-->
-    <!--        <el-form-item label="Date" prop="timestamp">-->
-    <!--          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />-->
-    <!--        </el-form-item>-->
-    <!--        <el-form-item label="Title" prop="title">-->
-    <!--          <el-input v-model="temp.title" />-->
-    <!--        </el-form-item>-->
-    <!--        <el-form-item label="Status">-->
-    <!--          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">-->
-    <!--            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />-->
-    <!--          </el-select>-->
-    <!--        </el-form-item>-->
-    <!--        <el-form-item label="Imp">-->
-    <!--          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />-->
-    <!--        </el-form-item>-->
-    <!--        <el-form-item label="Remark">-->
-    <!--          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />-->
-    <!--        </el-form-item>-->
-    <!--      </el-form>-->
-    <!--      <div slot="footer" class="dialog-footer">-->
-    <!--        <el-button @click="dialogFormVisible = false">-->
-    <!--          Cancel-->
-    <!--        </el-button>-->
-    <!--        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">-->
-    <!--          Confirm-->
-    <!--        </el-button>-->
-    <!--      </div>-->
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
@@ -162,7 +156,7 @@
 </template>
 
 <script>
-import { getAllTasks } from '@/api/smart-diff'
+import { getAllTasks, createTaskApi } from '@/api/smart-diff'
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import '@/assets/custom-theme/index.css'
@@ -204,6 +198,8 @@ export default {
   },
   data() {
     return {
+      createTaskFormData:{'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':''},
+      taskVisible: false,
       tableKey: 0,
       list: null,
       total: 0,
@@ -235,7 +231,6 @@ export default {
         type: '',
         status: 'published'
       },
-      dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: 'Edit',
@@ -255,6 +250,41 @@ export default {
     this.getTaskList()
   },
   methods: {
+    createTask(data){
+      for (let key in data) {
+        if (data[key] === 0 || data[key] === '') {
+          delete data[key];
+        }
+      }
+      createTaskApi(data).then(
+        response => {
+            console.log(response);
+            console.log(response.msg);
+            if(response.code == 200){
+                this.$notify({
+                    title: 'Success',
+                    message: '创建任务成功',
+                    type: 'success',
+                    duration: 2000
+                });
+                this.resetForm();
+                this.taskVisible = false;
+                this.getTaskList();
+            } else {
+
+                this.$notify({
+                    title: 'Fail',
+                    message: response.msg,
+                    type: 'error',
+                    duration: 2000
+                })
+            }
+
+        }
+      )
+
+    },
+
     openNewGptWindow(taskId) {
       // 获取目标路由的完整 URL
       const { href } = this.$router.resolve({ name: 'smartDiffTaskDetail', params: {id: taskId}})
@@ -346,9 +376,10 @@ export default {
       }
     },
     handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
+      this.taskVisible = true
+      // this.resetTemp()
+      // this.dialogStatus = 'create'
+      // this.dialogFormVisible = true
       // this.$nextTick(() => {
       //   this.$refs['dataForm'].clearValidate()
       // })
@@ -441,6 +472,9 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    resetForm(){
+      this.createTaskFormData={'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':''}
     }
   }
 }

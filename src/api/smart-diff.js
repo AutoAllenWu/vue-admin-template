@@ -29,3 +29,18 @@ export function resetGptAdvice(data) {
     data
   })
 }
+
+export function createGptCase(data) {
+  return request({
+    url: '/api/gpt/createCase',
+    method: 'post',
+    data
+  })
+}
+export function createTaskApi(data) {
+  return request({
+    url: '/api/task/add',
+    method: 'post',
+    data
+  })
+}

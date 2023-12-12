@@ -44,7 +44,7 @@
             <p><strong><b>稳定性建议： </b></strong></p>
             <p>{{ row.gpt_result.stability[0] }}</p>
             <p><strong><b>测试用例建议： </b></strong></p>
-            <div v-for="(v,k) in row.gpt_result.checklist" :key="o" class="text item">
+            <div v-for="(v,k) in row.gpt_result.checklist" :key="k" class="text item">
               <li> {{ v }} </li>
             </div>
             <el-button style="float: right; padding: 3px 0" type="text" @click="toggleGpt($index)">收起</el-button>
@@ -59,22 +59,21 @@
           <el-tag class="el-tag--danger" v-if="row && row.is_cased == 2">
             已拒绝
           </el-tag>
-          <el-button v-if="row && row.is_cased == 0" type="primary" size="mini" @click="handleAccept(row)" style="margin-left: 20px; margin-right: 20px">
-            接受
-          </el-button>
+
           <el-popconfirm
             ref="acceptPopConfirm"
             title="接受建议并新建case，确定么？"
             confirmButtonText="确定"
             cancelButtonText="取消"
-            @confirm="acceptConfirmHandler"
+            @onConfirm="acceptConfirmHandler(row, $index)"
           >
+          <el-button v-if="row && row.is_cased == 0 && row.checklist_id" type="primary" size="mini" slot="reference"  style="margin-left: 20px; margin-right: 20px">
+            接受
+          </el-button>
           </el-popconfirm>
           <el-button v-if ="row.is_cased == 2"  type="warning" size="mini" @click="handleReset(row,$index)" style="float: right;margin-left: 20px; margin-right: 20px">
             重置
           </el-button>
-          <el-popconfirm ref="acceptPopConfirm">
-          </el-popconfirm>
           <el-button v-if="row && (row.is_cased == 0)" size="mini" type="danger" @click="handleReject(row,$index)" style="margin-left: 20px; margin-right: 20px">
             拒绝
           </el-button>
@@ -88,7 +87,7 @@
 </template>
 
 <script>
-import { getTaskDetail, rejectGptAdvice, resetGptAdvice } from '@/api/smart-diff'
+import { getTaskDetail, rejectGptAdvice, resetGptAdvice, createGptCase } from '@/api/smart-diff'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import '@/assets/custom-theme/index.css'
 import CodeDiff from 'vue-code-diff'
@@ -117,7 +116,9 @@ export default {
       },
       currentRow:null,
       rejectData: {"gpt_result_id": null},
-      resetData: {"gpt_result_id": null}
+      resetData: {"gpt_result_id": null},
+      createCaseData: {"check_list_id": null, "gpt_result_id": null},
+      createCaseRow: null
     }
   },
   created() {
@@ -126,8 +127,30 @@ export default {
 
   },
   methods: {
-    acceptConfirmHandler(){
-
+    acceptConfirmHandler(row, index){
+      console.log('Confirmed');
+      this.createCaseData.check_list_id = row.checklist_id;
+      this.createCaseData.gpt_result_id = row.gpt_result_id;
+      createGptCase(this.createCaseData).then(
+        response => {
+          if (response.code == 200){
+            this.diffList[index].is_cased=1
+            this.$notify({
+              title: 'Success',
+              message: '操作成功',
+              type: 'success',
+              duration: 2000
+            })
+          }else {
+            this.$notify({
+              title: 'Failed',
+              message: '操作失败',
+              type: 'fail',
+              duration: 2000
+            })
+          }
+        }
+      )
     },
     handleReject(row,index){
       this.rejectData.gpt_result_id = row.gpt_result_id;
@@ -141,14 +164,20 @@ export default {
               type: 'success',
               duration: 2000
             })
+          }else {
+            this.$notify({
+              title: 'Failed',
+              message: '操作失败',
+              type: 'fail',
+              duration: 2000
+            })
           }
         }
       );
 
     },
-    handleAccept(row){
-      this.currentRow = row;
-      this.$refs.acceptPopConfirm.showPopper = true;
+    handleAccept(row,index){
+
     },
     handleReset(row,index){
       this.resetData.gpt_result_id = row.gpt_result_id;
