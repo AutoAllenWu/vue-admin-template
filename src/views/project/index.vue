@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <el-row>
-      <el-col :span="5">
-        <div class="grid-content bg-gray">
+
+    <div style="display: flex; justify-items: center; flex-wrap: nowrap; justify-content: space-between;">
+      <div class="transition-box" style="border:1px groove #b4bccc ; padding: 20px; height: fit-content;width: 20%;" >
           <el-tree
             :data="projectTreeList"
             node-key="id"
@@ -19,8 +19,7 @@
           >
           </el-tree>
         </div>
-      </el-col>
-      <el-col :span="18"><div class="grid-content bg-gray"></div>
+      <div style="display: flex; width: calc(80%);">
         <el-table>
           v-loading="listLoading"
           :data="gitProjectList"
@@ -29,10 +28,10 @@
           highlight-current-row
           style="width: 2003px; height: 2000px"
         </el-table>
-        <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />
-      </el-col>
-    </el-row>
 
+        <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />
+      </div>
+    </div>
 
 <!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />-->
 

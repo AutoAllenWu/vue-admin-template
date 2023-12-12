@@ -113,7 +113,7 @@
         <el-row>
           <el-col>
             <el-form-item  label="Git地址(ssh地址)：">
-              <el-input v-model="createTaskFormData.git_uri"></el-input>
+              <el-input placeholder="请确保已在项目管理里添加过该项目，否则不予执行"  v-model="createTaskFormData.git_uri"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -133,7 +133,7 @@
         </el-row>
         <el-row>
           <el-col >
-            <el-form-item label="CheckList ID">
+            <el-form-item label="CheckList ID：">
               <el-input v-model="createTaskFormData.checkListId"></el-input>
             </el-form-item>
           </el-col>
@@ -198,7 +198,7 @@ export default {
   },
   data() {
     return {
-      createTaskFormData:{'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':''},
+      createTaskFormData:{'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':'0'},
       taskVisible: false,
       tableKey: 0,
       list: null,
@@ -474,7 +474,7 @@ export default {
       return sort === `+${key}` ? 'ascending' : 'descending'
     },
     resetForm(){
-      this.createTaskFormData={'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':''}
+      this.createTaskFormData={'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':'0'}
     }
   }
 }
