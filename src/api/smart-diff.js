@@ -15,6 +15,7 @@ export function getTaskDetail(query) {
   })
 }
 
+
 export function rejectGptAdvice(data) {
   return request({
     url: '/api/gpt/reject',
@@ -42,5 +43,20 @@ export function createTaskApi(data) {
     url: '/api/task/add',
     method: 'post',
     data
+  })
+}
+
+export function getProjectTree() {
+  return request({
+    url: '/api/project/getAllTree',
+    method: 'get',
+  })
+}
+
+export function getProjectTList(query) {
+  return request({
+    url: '/api/project/getProjectList',
+    method: 'get',
+    params: query
   })
 }

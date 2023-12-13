@@ -93,7 +93,7 @@ import '@/assets/custom-theme/index.css'
 import CodeDiff from 'vue-code-diff'
 
 export default {
-  name: 'SmartDiff',
+  name: 'TaskDetail',
   components: { CodeDiff, Pagination },
   computed: {
     'paramId': function () {

@@ -138,8 +138,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div style="text-align: right"> <el-button type="primary" @click="createTask(createTaskFormData)">提交</el-button></div>
-
+        <div style="text-align: right"> <el-button :disabled="isProcessing" type="primary" @close="handleFormClose" @click="createTask(createTaskFormData)">提交</el-button></div>
       </el-form>
     </el-dialog>
 
@@ -199,6 +198,7 @@ export default {
   data() {
     return {
       createTaskFormData:{'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':'0'},
+      isProcessing:false,
       taskVisible: false,
       tableKey: 0,
       list: null,
@@ -250,7 +250,14 @@ export default {
     this.getTaskList()
   },
   methods: {
+    handleFormClose(){
+      this.isProcessing=false
+    },
     createTask(data){
+      if(this.isProcessing == true){
+        return
+      }
+      this.isProcessing = true
       for (let key in data) {
         if (data[key] === 0 || data[key] === '') {
           delete data[key];
@@ -282,6 +289,7 @@ export default {
 
         }
       )
+      this.isProcessing=false
 
     },
 
@@ -376,6 +384,7 @@ export default {
       }
     },
     handleCreate() {
+      this.isProcessing = false
       this.taskVisible = true
       // this.resetTemp()
       // this.dialogStatus = 'create'
