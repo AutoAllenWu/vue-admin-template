@@ -46,6 +46,14 @@ export function createTaskApi(data) {
   })
 }
 
+export function addProjectApi(data) {
+  return request({
+    url: '/api/project/add',
+    method: 'post',
+    data
+  })
+}
+
 export function getProjectTree() {
   return request({
     url: '/api/project/getAllTree',
