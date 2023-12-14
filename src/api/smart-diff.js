@@ -68,3 +68,43 @@ export function getProjectTList(query) {
     params: query
   })
 }
+
+export function deleteProjectApi(data) {
+  return request({
+    url: '/api/project/delete',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectApi(data) {
+  return request({
+    url: '/api/project/update',
+    method: 'post',
+    data
+  })
+}
+
+export function addGroupApi(data) {
+  return request({
+    url: '/api/group/add',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteGroupApi(data) {
+  return request({
+    url: '/api/group/delete',
+    method: 'post',
+    data
+  })
+}
+
+export function updateGroupApi(data) {
+  return request({
+    url: '/api/group/update',
+    method: 'post',
+    data
+  })
+}
