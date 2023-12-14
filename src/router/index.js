@@ -59,8 +59,8 @@ export const constantRoutes = [
   {
     path: '/smartDiff',
     component: Layout,
-    redirect: '/smartDiff/tasks',
-    meta: { title: 'Diff看板' },
+    //redirect: '/smartDiff/tasks',
+    meta: { title: 'BetterDiff' },
     children: [
       {
         path: 'tasks',
@@ -70,13 +70,13 @@ export const constantRoutes = [
       },
       {
         path: 'project',
-        component: () => import('@/views/project/index'),
+        component: () => import('@/views/smart-diff/project/index'),
         name: 'smartDiffProject',
         meta: { title: '项目管理', icon: 'el-icon-s-platform', affix: true }
       },
       {
         path: 'promt',
-        component: () => import('@/views/smart-diff/index'),
+        component: () => import('@/views/smart-diff/promt/index'),
         name: 'smartDiffPromt',
         meta: { title: 'Promt管理', icon: 'el-icon-s-platform', affix: true }
       },
@@ -84,23 +84,10 @@ export const constantRoutes = [
         path: 'taskDetail/:id',
         name: 'smartDiffTaskDetail',
         hidden: true,
-        component: () => import('@/views/task-detail/index'),
+        component: () => import('@/views/smart-diff/task-detail/index'),
         meta: { title: '任务diff详情', icon: 'form', hidden:true}
       }
     ] },
-  {
-    path: '/some/taskDetail',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        name: 'diffTaskDetail',
-        component: () => import('@/views/task-detail/index'),
-        meta: { title: 'Detail', icon: 'form', hidden:true}
-      }
-    ]
-  },
   // {
   //   path: '/',
   //   component: Layout,

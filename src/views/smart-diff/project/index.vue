@@ -1,11 +1,12 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="border-color: mintcream">
     <div style="display: flex; justify-items: center; flex-wrap: nowrap; justify-content: space-between;">
-      <div class="transition-box" style="border:0px groove #b4bccc ; padding: 20px; height: fit-content;width: 20%;">
+      <div class="slideInRight-transition" style=" display: flex; height: fit-content;width: 20%;">
         <el-tree
           :data="projectTreeList"
           node-key="id"
           style="height: 20%"
+          default-expand-all
           @node-click="handleNodeClick"
           ref="tree"
           :highlight-current="true"
@@ -14,9 +15,9 @@
           <template slot-scope="{ node, data }">
               <span>
                 {{ node.label }}
-                <el-tag class="custom-button" type="primary" v-show="currentNodeData.id === data.id" size="mini"
+                <el-tag style="margin-left: 100px" class="custom-button" type="primary" v-show="currentNodeData.id === data.id" size="mini"
                         @click.stop="handleAddNode(node,data)">添加节点</el-tag>
-                <el-tag class="custom-button" type="info" v-show="currentNodeData.id === data.id" size="mini"
+                <el-tag style="margin-left: 5px" class="custom-button" type="info" v-show="currentNodeData.id === data.id" size="mini"
                         @click.stop="handleUpdateNode(node,data)">更新节点</el-tag>
                 <el-popconfirm
                   confirm-button-text='确定'
@@ -26,7 +27,7 @@
                   title="删除将导致所有工程/diff不可见，但记录会保留，确定么？"
                   @onConfirm="handleDeleteNodeConfirm(data)"
                 >
-                  <el-tag v-show="currentNodeData.id === data.id" type="info" size="mini" slot="reference">删除</el-tag>
+                  <el-tag style="margin-left: 5px" v-show="currentNodeData.id === data.id" type="info" size="mini" slot="reference" @click.stop="">删除</el-tag>
                 </el-popconfirm>
                 <!--                <el-popconfirm-->
                 <!--                  ref="popconfirm1"-->
@@ -51,8 +52,7 @@
       <!--      @node-drop="handleDrop"-->
       <!--      :allow-drop="allowDrop"-->
       <!--      :allow-drag="allowDrag"-->
-      <div
-        style="display: flex;border:1px groove #dfe4ed ; padding: 20px; height: fit-content;width: 80%; background: 	#F8F8FF">
+      <div class="slideInRight-transition" style="display: flex; height: fit-content;width: 80%; margin-right: 20px">
         <el-row>
           <el-col :span="2">
             <el-button style="margin-bottom: 10px" icon="el-icon-document-add" class="el-button--mini" type="primary"
@@ -297,7 +297,7 @@ import {
   deleteGroupApi,
   updateGroupApi
 } from '@/api/smart-diff'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination/index.vue' // secondary package based on el-pagination
 import '@/assets/custom-theme/index.css'
 import CodeDiff from 'vue-code-diff'
 

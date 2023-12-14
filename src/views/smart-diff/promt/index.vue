@@ -88,7 +88,7 @@
 
 <script>
 import { getTaskDetail, rejectGptAdvice, resetGptAdvice, createGptCase } from '@/api/smart-diff'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination/index.vue' // secondary package based on el-pagination
 import '@/assets/custom-theme/index.css'
 import CodeDiff from 'vue-code-diff'
 
