@@ -108,3 +108,11 @@ export function updateGroupApi(data) {
     data
   })
 }
+
+export function getConfigListApi(query) {
+  return request({
+    url: '/api/gpt/config/getList',
+    method: 'get',
+    params: query
+  })
+}
