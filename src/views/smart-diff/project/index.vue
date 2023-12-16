@@ -501,7 +501,6 @@ export default {
         this.listQuery.project_group_id = data.id
 
         if (this.currentNodeData.id !== data.id) {
-          this.listLoading = true
           this.getProjectListOnNavi(true)
         }
       }
@@ -524,6 +523,7 @@ export default {
       })
     },
     getProjectListOnNavi(ifMute) {
+      this.listLoading = true
       getProjectTList(this.listQuery).then(
         response => {
           if (response.code == 200) {
@@ -531,21 +531,20 @@ export default {
             this.projectListTotal = response.data.total
             if (!ifMute) {
               this.successNotice("获取项目列表成功")
+              this.listLoading = false
             }
 
           } else {
             if (!ifMute) {
               this.failNotice("获取项目列表失败")
+              this.listLoading = false
             }
 
             this.dataNotice = "没有数据"
           }
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1.5 * 1000)
-
         }
       )
+      this.listLoading = false
     },
     handleNodeClick(data, node, event) {
       // if (node.isLeaf) {

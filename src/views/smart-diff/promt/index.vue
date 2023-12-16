@@ -94,7 +94,7 @@
           <el-row>
             <el-col >
               <el-form-item label="提示词内容：">
-                <el-input prefix-icon="el-icon-monitor" suffix-icon="el-icon-monitor" type="textarea" rows="10" v-model="editConfigFormData.gpt_config" autosize="autosize"></el-input>
+                <el-input prefix-icon="el-icon-monitor" suffix-icon="el-icon-monitor" type="textarea" rows="10" v-model="editConfigFormData.gpt_config" autosize="autosize" ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -105,10 +105,24 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <div style="text-align: right"> <el-button :disabled="listLoading" type="primary"  @click="handleEditConfigForm(editConfigFormData)">提交</el-button></div>
+          <div style="text-align: right"> <el-button :disabled="isFormChanged" type="primary"  @click="handleEditConfigForm(editConfigFormData)">提交</el-button></div>
         </el-form>
       </el-dialog>
 
+      <el-dialog :visible.sync="diffViewVisible">
+        <div style="margin-bottom: 40px">
+        <CodeDiff
+          :old-string="originConfigData.gpt_config"
+          :new-string="editConfigFormData.gpt_config"
+          :context=20
+          :renderNothingWhenEmpty="true"
+          output-format="line-by-line"/>
+          <el-button-group style="float: right; ">
+            <el-button type="info"  icon="el-icon-close" size="mini" @click="diffViewVisible = false" style="margin-left: 20px;">取消</el-button>
+            <el-button type="success"  icon="el-icon-check" size="mini" @click="submitEditConfigForm" style="margin-left: 20px;">确认</el-button>
+          </el-button-group>
+        </div>
+      </el-dialog>
     </div>
 
   </div>
@@ -123,7 +137,11 @@ import CodeDiff from 'vue-code-diff'
 export default {
   name: 'PromtList',
   components: {CodeDiff, Pagination},
-  computed: {},
+  computed: {
+    isFormChanged() {
+      return JSON.stringify(this.originConfigData) === JSON.stringify(this.editConfigFormData);
+    },
+  },
   data() {
     return {
       autosize:{ minRows: 5, maxRows: 20 },
@@ -149,7 +167,17 @@ export default {
         "handler":"",
         "version_id":0
       },
-      createCaseRow: null
+      originConfigData:{
+        "id":0,
+        "white_list":[],
+        "config_name":"",
+        "gpt_config":"",
+        "old_gpt_config":"",
+        "handler":"",
+        "version_id":0
+      },
+      createCaseRow: null,
+      diffViewVisible: false
     }
   },
   created() {
@@ -157,12 +185,22 @@ export default {
   },
   methods: {
     handleEditConfigForm(){
+      if(this.originConfigData.gpt_config !== this.editConfigFormData.gpt_config){
+        this.diffViewVisible = true
+      }
+      else{
+        this.submitEditConfigForm()
+      }
+    },
+    submitEditConfigForm(){
       updateConfigApi(this.editConfigFormData).then(
         response => {
           if (response.code == 200) {
             this.getConfigList()
             this.successNotice("更新配置成功")
             this.configEditVisible = false
+            this.diffViewVisible = false
+            this.resetForm()
           } else {
             this.failNotice(response.message)
           }
@@ -188,7 +226,28 @@ export default {
       this.editConfigFormData.white_list = row.white_list;
       this.editConfigFormData.id = row.id;
       this.editConfigFormData.version_id = row.version_id;
+      this.originConfigData = JSON.parse(JSON.stringify(this.editConfigFormData))
       this.configEditVisible = true;
+    },
+    resetForm(){
+      this.editConfigFormData={
+        "id":0,
+          "white_list":[],
+          "config_name":"",
+          "gpt_config":"",
+          "old_gpt_config":"",
+          "handler":"",
+          "version_id":0
+      }
+      this.originConfigData={
+        "id":0,
+          "white_list":[],
+          "config_name":"",
+          "gpt_config":"",
+          "old_gpt_config":"",
+          "handler":"",
+          "version_id":0
+      }
     },
     successNotice(message) {
       this.$notify({
@@ -220,43 +279,13 @@ export default {
         )
         this.configListtotal = response.data.total
 
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        this.listLoading = false
       })
+    },
+    getConfigHistoryList() {
+
     }
-}}
+}
+}
 
 </script>
-<!--          <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">-->
-<!--            <template slot-scope="{row,$index}">-->
-<!--              <el-tag class="el-tag&#45;&#45;success" v-if="row && row.is_cased == 1">-->
-<!--                已接受-->
-<!--              </el-tag>-->
-<!--              <el-tag class="el-tag&#45;&#45;danger" v-if="row && row.is_cased == 2">-->
-<!--                已拒绝-->
-<!--              </el-tag>-->
-
-<!--              <el-popconfirm-->
-<!--                ref="acceptPopConfirm"-->
-<!--                title="接受建议并新建case，确定么？"-->
-<!--                confirmButtonText="确定"-->
-<!--                cancelButtonText="取消"-->
-<!--                @onConfirm="acceptConfirmHandler(row, $index)"-->
-<!--              >-->
-<!--                <el-button v-if="row && row.is_cased == 0 && row.checklist_id" type="primary" size="mini"-->
-<!--                           slot="reference" style="margin-left: 20px; margin-right: 20px">-->
-<!--                  接受-->
-<!--                </el-button>-->
-<!--              </el-popconfirm>-->
-<!--              <el-button v-if="row.is_cased == 2" type="warning" size="mini" @click="handleReset(row,$index)"-->
-<!--                         style="float: right;margin-left: 20px; margin-right: 20px">-->
-<!--                重置-->
-<!--              </el-button>-->
-<!--              <el-button v-if="row && (row.is_cased == 0)" size="mini" type="danger" @click="handleReject(row,$index)"-->
-<!--                         style="margin-left: 20px; margin-right: 20px">-->
-<!--                拒绝-->
-<!--              </el-button>-->
-<!--            </template>-->
-<!--          </el-table-column>-->
