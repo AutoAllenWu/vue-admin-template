@@ -76,9 +76,9 @@
           <el-row>
             <el-col>
               <el-form-item  label="文件白名单：" >
-                <el-tag closable v-for="(tag, tag_index) in editConfigFormData.white_list" @close="handleTagClose(tag_index)" :key="tag_index">{{ tag }}</el-tag>
+                <el-tag closable v-for="(tag, tag_index) in editConfigFormData.white_list" @close="handleTagClose(tag_index)" :key="tag_index" style="margin-left: 10px">{{ tag }}</el-tag>
                 <div>
-                  <el-input type="text" size="small" style="width: 400px" placeholder="请输入内容" v-model="this.editConfigFormInputs"></el-input>
+                  <el-input type="text" size="small" style="width: 400px" placeholder="请输入内容" v-model="editConfigFormInputs"></el-input>
                   <el-button type="success" icon="el-icon-check" circle size="mini" style="margin-left: 20px" @click="handleInput"></el-button>
                 </div>
               </el-form-item>
@@ -105,18 +105,17 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <div style="text-align: right"> <el-button :disabled="listLoading" type="primary"  @click="createTask(updateConfigFormData)">提交</el-button></div>
+          <div style="text-align: right"> <el-button :disabled="listLoading" type="primary"  @click="handleEditConfigForm(editConfigFormData)">提交</el-button></div>
         </el-form>
       </el-dialog>
 
     </div>
-    <!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />-->
 
   </div>
 </template>
 
 <script>
-import {getConfigListApi} from '@/api/smart-diff'
+import {getConfigListApi,updateConfigApi} from '@/api/smart-diff'
 import Pagination from '@/components/Pagination/index.vue' // secondary package based on el-pagination
 import '@/assets/custom-theme/index.css'
 import CodeDiff from 'vue-code-diff'
@@ -142,10 +141,13 @@ export default {
       },
       currentRow: null,
       editConfigFormData:{
+        "id":0,
         "white_list":[],
         "config_name":"",
         "gpt_config":"",
-        "handler":""
+        "old_gpt_config":"",
+        "handler":"",
+        "version_id":0
       },
       createCaseRow: null
     }
@@ -154,25 +156,55 @@ export default {
     this.getConfigList();
   },
   methods: {
+    handleEditConfigForm(){
+      updateConfigApi(this.editConfigFormData).then(
+        response => {
+          if (response.code == 200) {
+            this.getConfigList()
+            this.successNotice("更新配置成功")
+            this.configEditVisible = false
+          } else {
+            this.failNotice(response.message)
+          }
+        }
+      )
+    },
     handleInput() {
       if (this.editConfigFormInputs) {
         this.editConfigFormData.white_list.push(this.editConfigFormInputs);
         this.editConfigFormInputs = "";
       }},
     handleTagClose(index){
-      this.tags.editConfigFormData.white_list.splice(index, 1);
+      this.editConfigFormData.white_list.splice(index, 1);
     },
     handleEditFormClose(){
       this.configEditVisible=false;
     },
     handleEditButton(row){
-      console.log(this.editConfigFormData);
-      console.log(this.editConfigFormData.white_list);
-      this.configEditVisible = true;
       this.editConfigFormData.handler = row.handler;
       this.editConfigFormData.gpt_config = row.gpt_config;
+      this.editConfigFormData.old_gpt_config = row.gpt_config;
       this.editConfigFormData.config_name = row.config_name;
       this.editConfigFormData.white_list = row.white_list;
+      this.editConfigFormData.id = row.id;
+      this.editConfigFormData.version_id = row.version_id;
+      this.configEditVisible = true;
+    },
+    successNotice(message) {
+      this.$notify({
+        title: 'Success',
+        message: message,
+        type: 'success',
+        duration: 2000
+      })
+    },
+    failNotice(message) {
+      this.$notify({
+        title: 'Failed',
+        message: message,
+        type: 'fail',
+        duration: 2000
+      })
     },
     getConfigList() {
       this.listLoading = true

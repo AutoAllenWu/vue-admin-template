@@ -116,3 +116,11 @@ export function getConfigListApi(query) {
     params: query
   })
 }
+
+export function updateConfigApi(data) {
+  return request({
+    url: '/api/gpt/config/update',
+    method: 'post',
+    data
+  })
+}
