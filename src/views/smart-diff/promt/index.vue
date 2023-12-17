@@ -60,7 +60,7 @@
           <template slot-scope="{row,$index}">
           <el-button-group>
             <el-button type="text" circle icon="el-icon-edit" size="mini" @click="handleEditButton(row)">编辑</el-button>
-            <el-button type="text" round icon="el-icon-info" size="mini" @click="">修改记录</el-button>
+            <el-button type="text" round icon="el-icon-info" size="mini" @click="handleLogButton">修改记录</el-button>
           </el-button-group>
           </template>
         </el-table-column>
@@ -282,8 +282,8 @@ export default {
         this.listLoading = false
       })
     },
-    getConfigHistoryList() {
-
+    handleLogButton() {
+      this.$router.push({"name":"smartDiffPromtLog"})
     }
 }
 }

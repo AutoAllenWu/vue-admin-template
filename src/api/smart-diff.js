@@ -124,3 +124,18 @@ export function updateConfigApi(data) {
     data
   })
 }
+
+export function getConfigOptionsApi(query) {
+  return request({
+    url: '/api/gpt/config/getOptions',
+    method: 'get',
+    params: query
+  })
+}
+export function getConfigLogsApi(query) {
+  return request({
+    url: '/api/gpt/config/log/list',
+    method: 'get',
+    params: query
+  })
+}

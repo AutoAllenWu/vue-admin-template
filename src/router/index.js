@@ -81,6 +81,13 @@ export const constantRoutes = [
         meta: { title: 'Promt管理', icon: 'el-icon-s-platform', affix: true }
       },
       {
+        path: 'promt/logs',
+        component: () => import('@/views/smart-diff/promt/logs/index'),
+        name: 'smartDiffPromtLog',
+        hidden: true,
+        meta: { title: 'Promt修改记录', icon: 'el-icon-s-platform', affix: true }
+      },
+      {
         path: 'taskDetail/:id',
         name: 'smartDiffTaskDetail',
         hidden: true,
