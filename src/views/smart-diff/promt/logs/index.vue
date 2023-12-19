@@ -1,25 +1,26 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-<!--      <el-input v-model="listQuery.git_ssh_url" placeholder="Git模糊匹配" style="width: 400px; margin-bottom: 20px" class="filter-item" @keyup.enter.native="handleFilter" />-->
+      <!--      <el-input v-model="listQuery.git_ssh_url" placeholder="Git模糊匹配" style="width: 400px; margin-bottom: 20px" class="filter-item" @keyup.enter.native="handleFilter" />-->
 
-<!--      <el-select v-model="listQuery.status" placeholder="任务状态" clearable class="filter-item" style="width: 130px; margin-left: 20px; margin-bottom: 20px">-->
-<!--        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />-->
-<!--      </el-select>-->
+      <!--      <el-select v-model="listQuery.status" placeholder="任务状态" clearable class="filter-item" style="width: 130px; margin-left: 20px; margin-bottom: 20px">-->
+      <!--        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />-->
+      <!--      </el-select>-->
       <el-select
         v-model="listQuery.config_id"
         filterable
         clearable
-        placeholder="请选择">
+        placeholder="请选择"
+      >
         <el-option
           v-for="item in options"
           :key="item.id"
           :label="item.gpt_name"
-          :value="item.id">
-          </el-option>
+          :value="item.id"
+        />
       </el-select>
 
-      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilterClick" style=" margin-left: 20px; margin-bottom: 20px">
+      <el-button class="filter-item" type="primary" icon="el-icon-search" style=" margin-left: 20px; margin-bottom: 20px" @click="handleFilterClick">
         搜索
       </el-button>
 
@@ -71,11 +72,12 @@
         <CodeDiff
           :old-string="old_content"
           :new-string="new_content"
-          :context=20
-          :renderNothingWhenEmpty="true"
-          output-format="line-by-line"/>
+          :context="20"
+          :render-nothing-when-empty="true"
+          output-format="line-by-line"
+        />
       </div></el-dialog>
-<!--    <pagination v-show="listTotal>0" :total="listTotal" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />-->
+    <!--    <pagination v-show="listTotal>0" :total="listTotal" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />-->
   </div>
 </template>
 
@@ -85,7 +87,6 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import '@/assets/custom-theme/index.css'
 import CodeDiff from 'vue-code-diff'
-
 
 export default {
   name: 'ConfigHistory',
@@ -97,17 +98,17 @@ export default {
   data() {
     return {
       options: [],
-      list:[],
+      list: [],
       listQuery: {
-        "page_num": 1,
-        "page_size": 20,
-        "config_id": null
+        'page_num': 1,
+        'page_size': 20,
+        'config_id': null
       },
-      listTotal:0,
+      listTotal: 0,
       selected_id: null,
       listLoading: false,
       diffViewVisible: false,
-      old_content:null,
+      old_content: null,
       new_content: null
     }
   },
@@ -115,12 +116,12 @@ export default {
     this.getConfigOptions()
   },
   methods: {
-    handleDetail(row){
+    handleDetail(row) {
       this.new_content = row.new_content
       this.old_content = row.old_content
       this.diffViewVisible = true
     },
-    getConfigOptions(){
+    getConfigOptions() {
       getConfigOptionsApi(this.listQuery).then(
         response => {
           if (response.code == 200) {
@@ -132,10 +133,10 @@ export default {
         }
       )
     },
-    handleFilter(){
+    handleFilter() {
       this.getConfigList()
     },
-    getConfigList(){
+    getConfigList() {
       this.listLoading = true
       getConfigLogsApi(this.listQuery).then(
         response => {
@@ -149,7 +150,7 @@ export default {
       )
       this.listLoading = false
     },
-    handleFilterClick(){
+    handleFilterClick() {
       this.getConfigList()
     }
   }

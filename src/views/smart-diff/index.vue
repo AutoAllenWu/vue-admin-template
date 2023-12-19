@@ -7,10 +7,10 @@
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
       </el-select>
 
-      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter" style=" margin-left: 20px; margin-bottom: 20px">
+      <el-button class="filter-item" type="primary" icon="el-icon-search" style=" margin-left: 20px; margin-bottom: 20px" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item"  style="margin-left: 400px; margin-bottom: 20px; float: right" type="info" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 400px; margin-bottom: 20px; float: right" type="info" icon="el-icon-edit" @click="handleCreate">
         创建任务
       </el-button>
 
@@ -26,55 +26,55 @@
       style="width: 100%;"
     >
       <el-table-column label="任务ID" prop="id" align="center" width="80">
-<!--      <el-table-column label="任务ID" prop="id" align="center">-->
+        <!--      <el-table-column label="任务ID" prop="id" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="项目描述" width="200" align="center">-->
+      <!--      <el-table-column label="项目描述" width="200" align="center">-->
       <el-table-column label="项目描述" align="center">
         <template slot-scope="{row}">
           <span>{{ row.git_description }}</span>
         </template>
       </el-table-column>
       <el-table-column label="GIT_SSH" align="center">
-<!--      <el-table-column label="GIT_SSH" width="450" align="center">-->
+        <!--      <el-table-column label="GIT_SSH" width="450" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.ssh_url }}</span>
         </template>
       </el-table-column>
       <el-table-column label="基准分支" align="center">
-<!--      <el-table-column label="基准分支" width="100" align="center">-->
+        <!--      <el-table-column label="基准分支" width="100" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.base_branch }}</span>
         </template></el-table-column>
       <el-table-column label="CommitID" align="center">
-<!--      <el-table-column label="基准CommitID" width="120" align="center">-->
+        <!--      <el-table-column label="基准CommitID" width="120" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.base_commit }}</span>
         </template>
       </el-table-column>
       <el-table-column label="对比分支" align="center" style="white-space: nowrap;">
-<!--      <el-table-column label="对比分支" width="240" align="center">-->
+        <!--      <el-table-column label="对比分支" width="240" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.beta_branch }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="CommitID"  align="center">
-<!--      <el-table-column label="对比CommitID" width="120" align="center">-->
+      <el-table-column label="CommitID" align="center">
+        <!--      <el-table-column label="对比CommitID" width="120" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.beta_commit }}</span>
         </template>
       </el-table-column>
       <el-table-column label="任务状态" align="center">
-<!--      <el-table-column label="任务状态" width="150" align="center">-->
+        <!--      <el-table-column label="任务状态" width="150" align="center">-->
         <template slot-scope="{row}" type="success">
           <!--          <span><el-tag class="tag-item" @type="getTagType(row.status)" > {{ getStatusText(row.status) }}</el-tag></span>-->
           <span><el-tag class="tag-item" :type="getTagType(row.status)"> {{ getStatusText(row.status) }}</el-tag></span>
         </template>
       </el-table-column>
-      <el-table-column label="发起人"  align="center">
-<!--      <el-table-column label="发起人" width="150" align="center">-->
+      <el-table-column label="发起人" align="center">
+        <!--      <el-table-column label="发起人" width="150" align="center">-->
         <template slot-scope="{row}">
           <span>{{ row.creator }}</span>
         </template>
@@ -112,29 +112,29 @@
       <el-form label-width="200px" style="border:1px solid #C4E1C5 ; padding: 20px" oncancel="resetForm">
         <el-row>
           <el-col>
-            <el-form-item  label="Git地址(ssh地址)：">
-              <el-input placeholder="请确保已在项目管理里添加过该项目，否则不予执行"  v-model="createTaskFormData.git_uri"></el-input>
+            <el-form-item label="Git地址(ssh地址)：">
+              <el-input v-model="createTaskFormData.git_uri" placeholder="请确保已在项目管理里添加过该项目，否则不予执行" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col >
+          <el-col>
             <el-form-item label="待对比分支：">
-              <el-input v-model="createTaskFormData.betaBranch"></el-input>
+              <el-input v-model="createTaskFormData.betaBranch" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col >
+          <el-col>
             <el-form-item label="基准分支(默认master)：">
-              <el-input v-model="createTaskFormData.baseBranch"></el-input>
+              <el-input v-model="createTaskFormData.baseBranch" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col >
+          <el-col>
             <el-form-item label="CheckList ID：">
-              <el-input v-model="createTaskFormData.checkListId"></el-input>
+              <el-input v-model="createTaskFormData.checkListId" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -197,8 +197,8 @@ export default {
   },
   data() {
     return {
-      createTaskFormData:{'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':'0'},
-      isProcessing:false,
+      createTaskFormData: { 'betaBranch': '', 'git_uri': '', 'baseBranch': 'master', 'checkListId': '0' },
+      isProcessing: false,
       taskVisible: false,
       tableKey: 0,
       list: null,
@@ -247,52 +247,49 @@ export default {
     this.getTaskList()
   },
   methods: {
-    handleFormClose(){
-      this.isProcessing=false
+    handleFormClose() {
+      this.isProcessing = false
     },
-    createTask(data){
-      if(this.isProcessing == true){
+    createTask(data) {
+      if (this.isProcessing == true) {
         return
       }
       this.isProcessing = true
-      for (let key in data) {
+      for (const key in data) {
         if (data[key] === 0 || data[key] === '') {
-          delete data[key];
+          delete data[key]
         }
       }
       createTaskApi(data).then(
         response => {
-            console.log(response);
-            console.log(response.msg);
-            if(response.code == 200){
-                this.$notify({
-                    title: 'Success',
-                    message: '创建任务成功',
-                    type: 'success',
-                    duration: 2000
-                });
-                this.resetForm();
-                this.taskVisible = false;
-                this.getTaskList();
-            } else {
-
-                this.$notify({
-                    title: 'Fail',
-                    message: response.msg,
-                    type: 'error',
-                    duration: 2000
-                })
-            }
-
+          console.log(response)
+          console.log(response.msg)
+          if (response.code == 200) {
+            this.$notify({
+              title: 'Success',
+              message: '创建任务成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.resetForm()
+            this.taskVisible = false
+            this.getTaskList()
+          } else {
+            this.$notify({
+              title: 'Fail',
+              message: response.msg,
+              type: 'error',
+              duration: 2000
+            })
+          }
         }
       )
-      this.isProcessing=false
-
+      this.isProcessing = false
     },
 
     openNewGptWindow(taskId) {
       // 获取目标路由的完整 URL
-      const { href } = this.$router.resolve({ name: 'smartDiffTaskDetail', params: {id: taskId}})
+      const { href } = this.$router.resolve({ name: 'smartDiffTaskDetail', params: { id: taskId }})
 
       // 打开新窗口并跳转到目标路由
       window.open(href, '_blank')
@@ -380,7 +377,6 @@ export default {
     handleCreate() {
       this.isProcessing = false
       this.taskVisible = true
-
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -423,8 +419,8 @@ export default {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
     },
-    resetForm(){
-      this.createTaskFormData={'betaBranch':'', 'git_uri':'','baseBranch':'master','checkListId':'0'}
+    resetForm() {
+      this.createTaskFormData = { 'betaBranch': '', 'git_uri': '', 'baseBranch': 'master', 'checkListId': '0' }
     }
   }
 }

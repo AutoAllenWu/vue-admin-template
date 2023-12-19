@@ -12,15 +12,16 @@
     >
       <el-table-column label="改动文件" prop="file_path" align="left" header-align="center" min-width="600">
         <template slot-scope="{row,$index}">
-          <div class="" @click="toggleDetail($index)" >{{ row.file_path }}</div>
-          <div v-show="row.showDetail" >
+          <div class="" @click="toggleDetail($index)">{{ row.file_path }}</div>
+          <div v-show="row.showDetail">
             <CodeDiff
               :old-string="row.old_content"
               :new-string="row.new_content"
               :file-name="row.file_path"
-              :context=5
-              :renderNothingWhenEmpty="true"
-              output-format="line-by-line"/>
+              :context="5"
+              :render-nothing-when-empty="true"
+              output-format="line-by-line"
+            />
           </div>
         </template>
       </el-table-column>
@@ -33,10 +34,10 @@
             </div>
             <el-button style="float: right; padding: 3px 0" type="text" @click="toggleGpt($index)">查看详情</el-button>
           </el-card>
-          <el-card class="box-card" v-show="row.showGpt">
-<!--            <div v-for="(v,k) in row.gpt_result" :key="o" class="text item">-->
-<!--              <li> {{'列表内容 ' + o }} </li>-->
-<!--            </div>-->
+          <el-card v-show="row.showGpt" class="box-card">
+            <!--            <div v-for="(v,k) in row.gpt_result" :key="o" class="text item">-->
+            <!--              <li> {{'列表内容 ' + o }} </li>-->
+            <!--            </div>-->
             <p><strong><b>业务解释： </b></strong></p>
             <p>{{ row.gpt_result.business[0] }}</p>
             <p><strong><b>改动影响： </b></strong></p>
@@ -53,35 +54,35 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-tag class="el-tag--success" v-if="row && row.is_cased == 1">
+          <el-tag v-if="row && row.is_cased == 1" class="el-tag--success">
             已接受
           </el-tag>
-          <el-tag class="el-tag--danger" v-if="row && row.is_cased == 2">
+          <el-tag v-if="row && row.is_cased == 2" class="el-tag--danger">
             已拒绝
           </el-tag>
 
           <el-popconfirm
             ref="acceptPopConfirm"
             title="接受建议并新建case，确定么？"
-            confirmButtonText="确定"
-            cancelButtonText="取消"
+            confirm-button-text="确定"
+            cancel-button-text="取消"
             @onConfirm="acceptConfirmHandler(row, $index)"
           >
-          <el-button v-if="row && row.is_cased == 0 && row.checklist_id" type="primary" size="mini" slot="reference"  style="margin-left: 20px; margin-right: 20px">
-            接受
-          </el-button>
+            <el-button v-if="row && row.is_cased == 0 && row.checklist_id" slot="reference" type="primary" size="mini" style="margin-left: 20px; margin-right: 20px">
+              接受
+            </el-button>
           </el-popconfirm>
-          <el-button v-if ="row.is_cased == 2"  type="warning" size="mini" @click="handleReset(row,$index)" style="float: right;margin-left: 20px; margin-right: 20px">
+          <el-button v-if="row.is_cased == 2" type="warning" size="mini" style="float: right;margin-left: 20px; margin-right: 20px" @click="handleReset(row,$index)">
             重置
           </el-button>
-          <el-button v-if="row && (row.is_cased == 0)" size="mini" type="danger" @click="handleReject(row,$index)" style="margin-left: 20px; margin-right: 20px">
+          <el-button v-if="row && (row.is_cased == 0)" size="mini" type="danger" style="margin-left: 20px; margin-right: 20px" @click="handleReject(row,$index)">
             拒绝
           </el-button>
         </template>
-        </el-table-column>
+      </el-table-column>
     </el-table>
 
-<!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />-->
+    <!--    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page_num" :limit.sync="listQuery.page_size" @pagination="getTaskList" />-->
 
   </div>
 </template>
@@ -95,11 +96,6 @@ import CodeDiff from 'vue-code-diff'
 export default {
   name: 'TaskDetail',
   components: { CodeDiff, Pagination },
-  computed: {
-    'paramId': function () {
-      return this.$route.params.id;
-    }
-  },
   data() {
     return {
       tableKey: 0,
@@ -114,34 +110,38 @@ export default {
         page_size: 20,
         task_id: this.paramId
       },
-      currentRow:null,
-      rejectData: {"gpt_result_id": null},
-      resetData: {"gpt_result_id": null},
-      createCaseData: {"check_list_id": null, "gpt_result_id": null},
+      currentRow: null,
+      rejectData: { 'gpt_result_id': null },
+      resetData: { 'gpt_result_id': null },
+      createCaseData: { 'check_list_id': null, 'gpt_result_id': null },
       createCaseRow: null
     }
   },
+  computed: {
+    'paramId': function() {
+      return this.$route.params.id
+    }
+  },
   created() {
-    this.getTaskDetailList();
-    this.listQuery.task_id = this.paramId;
-
+    this.getTaskDetailList()
+    this.listQuery.task_id = this.paramId
   },
   methods: {
-    acceptConfirmHandler(row, index){
-      console.log('Confirmed');
-      this.createCaseData.check_list_id = row.checklist_id;
-      this.createCaseData.gpt_result_id = row.gpt_result_id;
+    acceptConfirmHandler(row, index) {
+      console.log('Confirmed')
+      this.createCaseData.check_list_id = row.checklist_id
+      this.createCaseData.gpt_result_id = row.gpt_result_id
       createGptCase(this.createCaseData).then(
         response => {
-          if (response.code == 200){
-            this.diffList[index].is_cased=1
+          if (response.code == 200) {
+            this.diffList[index].is_cased = 1
             this.$notify({
               title: 'Success',
               message: '操作成功',
               type: 'success',
               duration: 2000
             })
-          }else {
+          } else {
             this.$notify({
               title: 'Failed',
               message: '操作失败',
@@ -152,19 +152,19 @@ export default {
         }
       )
     },
-    handleReject(row,index){
-      this.rejectData.gpt_result_id = row.gpt_result_id;
+    handleReject(row, index) {
+      this.rejectData.gpt_result_id = row.gpt_result_id
       rejectGptAdvice(this.rejectData).then(
         response => {
-          if (response.code == 200){
-            this.diffList[index].is_cased=2
+          if (response.code == 200) {
+            this.diffList[index].is_cased = 2
             this.$notify({
               title: 'Success',
               message: '操作成功',
               type: 'success',
               duration: 2000
             })
-          }else {
+          } else {
             this.$notify({
               title: 'Failed',
               message: '操作失败',
@@ -173,18 +173,17 @@ export default {
             })
           }
         }
-      );
+      )
+    },
+    handleAccept(row, index) {
 
     },
-    handleAccept(row,index){
-
-    },
-    handleReset(row,index){
-      this.resetData.gpt_result_id = row.gpt_result_id;
+    handleReset(row, index) {
+      this.resetData.gpt_result_id = row.gpt_result_id
       resetGptAdvice(this.resetData).then(
         response => {
-          if (response.code == 200){
-            this.diffList[index].is_cased=0
+          if (response.code == 200) {
+            this.diffList[index].is_cased = 0
             this.$notify({
               title: 'Success',
               message: '操作成功',
@@ -193,17 +192,17 @@ export default {
             })
           }
         }
-      );
+      )
     },
     toggleDetail(index) {
-      console.log("进入 toggle")
+      console.log('进入 toggle')
       console.log(index)
-      this.diffList[index].showDetail = !this.diffList[index].showDetail;
+      this.diffList[index].showDetail = !this.diffList[index].showDetail
     },
     toggleGpt(index) {
-      console.log("进入 toggle")
+      console.log('进入 toggle')
       console.log(index)
-      this.diffList[index].showGpt = !this.diffList[index].showGpt;
+      this.diffList[index].showGpt = !this.diffList[index].showGpt
     },
     openNewGptWindow(taskId) {
       // 获取目标路由的完整 URL
@@ -221,7 +220,7 @@ export default {
             return {
               ...item,
               showDetail: false,
-              showGpt: false,
+              showGpt: false
             }
           }
         )
@@ -233,7 +232,7 @@ export default {
     },
     getStatusText(change_type) {
       switch (change_type) {
-        case "":
+        case '':
           return '初始化'
         case 2:
           return '获取分支成功'

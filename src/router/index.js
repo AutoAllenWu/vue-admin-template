@@ -59,7 +59,7 @@ export const constantRoutes = [
   {
     path: '/smartDiff',
     component: Layout,
-    //redirect: '/smartDiff/tasks',
+    // redirect: '/smartDiff/tasks',
     meta: { title: 'BetterDiff' },
     children: [
       {
@@ -92,7 +92,7 @@ export const constantRoutes = [
         name: 'smartDiffTaskDetail',
         hidden: true,
         component: () => import('@/views/smart-diff/task-detail/index'),
-        meta: { title: '任务diff详情', icon: 'form', hidden:true}
+        meta: { title: '任务diff详情', icon: 'form', hidden: true }
       }
     ] },
   // {

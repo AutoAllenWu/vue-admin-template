@@ -52,7 +52,7 @@ export default {
       return !this.sidebar.opened
     },
     visibleRoutes() {
-      return this.$router.options.routes.filter(route => !route.meta.hidden);
+      return this.$router.options.routes.filter(route => !route.meta.hidden)
     }
   }
 }

@@ -15,7 +15,6 @@ export function getTaskDetail(query) {
   })
 }
 
-
 export function rejectGptAdvice(data) {
   return request({
     url: '/api/gpt/reject',
@@ -57,7 +56,7 @@ export function addProjectApi(data) {
 export function getProjectTree() {
   return request({
     url: '/api/project/getAllTree',
-    method: 'get',
+    method: 'get'
   })
 }
 

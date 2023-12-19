@@ -13,7 +13,6 @@ import store from './store'
 import router from './router'
 import VueCompositionApi from '@vue/composition-api'
 
-
 import '@/icons' // icon
 import '@/permission' // permission control
 
