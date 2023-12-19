@@ -1,0 +1,6 @@
+FROM dir.staff.xdf.cn/ai/qa/nginx:1.20
+LABEL authors="wuxingwei"
+
+COPY better-diff.conf /etc/nginx/conf.d/
+
+ENTRYPOINT ["top"]
